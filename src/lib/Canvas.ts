@@ -14,8 +14,6 @@ export class Canvas {
     }
 
     public drawPoints(points: Point[], closePath: boolean) {
-        this.clear();
-
         this.ctx.beginPath();
         for (let i = 0; i < points.length; i++) {
             this.ctx.lineTo(points[i].x, points[i].y);
@@ -28,7 +26,7 @@ export class Canvas {
         this.ctx.stroke();
     }
 
-    private clear() {
+    public clear() {
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
     }
 }
