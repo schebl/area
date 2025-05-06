@@ -5,11 +5,6 @@
     let canvas: HTMLCanvasElement;
 
     const polygonPoints: Point[] = $state([]);
-    const rulerPoints: Point[] = $state([]);
-
-    type PointsBuildingMode = "polygon" | "ruler"
-    let isBuildingPolygon: PointsBuildingMode = $state("polygon");
-
     let polygonArea = $derived(getPolygonArea(polygonPoints));
 
     function getPolygonArea(polygon: Point[]): number {
@@ -22,6 +17,23 @@
         }
         return Math.abs(area) / 2;
     }
+
+    const rulerPoints: Point[] = $state([]);
+    let rulerLength = $derived(getRulerLength(rulerPoints));
+
+    function getRulerLength(ruler: Point[]): number {
+        if (ruler.length != 2) {
+            return 0;
+        }
+
+        return Math.sqrt(
+            (ruler[1].x - ruler[0].x) ** 2
+            + (ruler[1].y - ruler[0].y) ** 2,
+        );
+    }
+
+    type PointsBuildingMode = "polygon" | "ruler"
+    let isBuildingPolygon: PointsBuildingMode = $state("polygon");
 
     function handleAddPoint(e: MouseEvent) {
         if (isBuildingPolygon === "polygon") {
@@ -61,7 +73,11 @@
         style="border: 1px solid #535bf2"
     ></canvas>
 
-    <p>Area: {polygonArea}</p>
+    <div>
+        <p>Polygon Area: {polygonArea}</p>
+
+        <p>Ruler Length: {rulerLength}</p>
+    </div>
 
     <div>
         <h3>Building Mode</h3>
