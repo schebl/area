@@ -78,7 +78,6 @@
         onclick={handleAddPoint}
         width="500"
         height="500"
-        style="border: 1px solid #535bf2"
     ></canvas>
 
     <div>
@@ -115,3 +114,9 @@
         </button>
     </div>
 </main>
+
+<style>
+    canvas {
+        border: 1px solid #535bf2;
+    }
+</style>
