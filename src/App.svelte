@@ -85,15 +85,7 @@
             Units: <input type="number" bind:value={units}>
         </div>
 
-        <div>
-            <p>Ruler Length: {rulerLength}</p>
-
-            <p>Scale: {scale}</p>
-
-            <p>Polygon Area: {polygonArea}</p>
-
-            <p>Polygon Area (scaled): {polygonArea * scale ** 2}</p>
-        </div>
+        <p>Polygon Area: {polygonArea * scale ** 2}</p>
     </div>
 
     <div>
