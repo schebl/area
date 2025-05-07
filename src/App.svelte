@@ -26,9 +26,9 @@
             return 0;
         }
 
-        return Math.sqrt(
-            (ruler[1].x - ruler[0].x) ** 2
-            + (ruler[1].y - ruler[0].y) ** 2,
+        return Math.hypot(
+            ruler[1].x - ruler[0].x,
+            ruler[1].y - ruler[0].y,
         );
     }
 
