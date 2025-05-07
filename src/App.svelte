@@ -93,7 +93,7 @@
 
             <p>Polygon Area: {polygonArea}</p>
 
-            <p>Polygon Area (scaled): {polygonArea * scale}</p>
+            <p>Polygon Area (scaled): {polygonArea * scale ** 2}</p>
         </div>
     </div>
 
