@@ -32,6 +32,14 @@
         );
     }
 
+    let units = $state(1);
+    let scale = $derived.by(() => {
+        if (rulerLength === 0) {
+            return 1;
+        }
+        return units / rulerLength;
+    });
+
     type PointsBuildingMode = "polygon" | "ruler"
     let isBuildingPolygon: PointsBuildingMode = $state("polygon");
 
@@ -74,9 +82,19 @@
     ></canvas>
 
     <div>
-        <p>Polygon Area: {polygonArea}</p>
+        <div>
+            Units: <input type="number" bind:value={units}>
+        </div>
 
-        <p>Ruler Length: {rulerLength}</p>
+        <div>
+            <p>Ruler Length: {rulerLength}</p>
+
+            <p>Scale: {scale}</p>
+
+            <p>Polygon Area: {polygonArea}</p>
+
+            <p>Polygon Area (scaled): {polygonArea * scale}</p>
+        </div>
     </div>
 
     <div>
