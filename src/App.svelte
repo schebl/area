@@ -63,6 +63,24 @@
         }
     }
 
+    function handleSetImage(event: Event) {
+        const input = event.target as HTMLInputElement;
+        if (!input.files || input.files.length < 1) {
+            return;
+        }
+
+        const file = input.files[0];
+        if (!file) {
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            canvas.style.backgroundImage = `url(${e.target.result})`;
+        };
+        reader.readAsDataURL(file);
+    }
+
     $effect(() => {
         const cnv = new Canvas(canvas);
         cnv.clear();
@@ -81,6 +99,8 @@
     ></canvas>
 
     <div>
+        <input type="file" accept="image/*" onchange={handleSetImage}>
+
         <div>
             Units: <input type="number" bind:value={units}>
         </div>
@@ -110,5 +130,9 @@
 <style>
     canvas {
         border: 1px solid #535bf2;
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-position-y: center;
+        background-position-x: center;
     }
 </style>
