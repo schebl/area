@@ -4,7 +4,15 @@
     import {onDestroy} from "svelte";
 
     let canvas: HTMLCanvasElement;
-    let canvasImageUrl = $state("")
+
+    let files = $state<FileList | null>(null);
+    let canvasImageUrl = $derived.by(() => {
+        const file = files?.[0] ?? null;
+        if (!file) {
+            return null;
+        }
+        return URL.createObjectURL(file);
+    });
 
     const polygonPoints: Point[] = $state([]);
     let polygonArea = $derived(getPolygonArea(polygonPoints));
@@ -65,15 +73,6 @@
         }
     }
 
-    function handleSetImage(event: Event) {
-        const input = event.target as HTMLInputElement;
-        const file = input.files?.[0] ?? null;
-        if (!file) {
-            return null;
-        }
-        canvasImageUrl = URL.createObjectURL(file);
-    }
-
     $effect(() => {
         const cnv = new Canvas(canvas);
         cnv.clear();
@@ -109,7 +108,7 @@
     ></canvas>
 
     <div>
-        <input type="file" accept="image/*" onchange={handleSetImage}>
+        <input type="file" accept="image/*" bind:files={files}>
 
         <div>
             Units: <input type="number" bind:value={units}>
