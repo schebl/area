@@ -1,6 +1,7 @@
 <script lang="ts">
     import {Canvas} from "./lib/Canvas";
     import type {Point} from "./lib/Point";
+    import {onDestroy} from "svelte";
 
     let canvas: HTMLCanvasElement;
     let canvasImageUrl = $state("")
@@ -66,24 +67,11 @@
 
     function handleSetImage(event: Event) {
         const input = event.target as HTMLInputElement;
-        if (!input.files || input.files.length < 1) {
-            return;
-        }
-
-        const file = input.files[0];
+        const file = input.files?.[0] ?? null;
         if (!file) {
-            return;
+            return null;
         }
-
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const url = e.target?.result;
-            if (typeof url !== "string") {
-                return;
-            }
-            canvasImageUrl = url;
-        };
-        reader.readAsDataURL(file);
+        canvasImageUrl = URL.createObjectURL(file);
     }
 
     $effect(() => {
@@ -92,6 +80,22 @@
 
         cnv.drawPoints(polygonPoints, true);
         cnv.drawPoints(rulerPoints, false);
+    });
+
+    $effect(() => {
+        // save replaced image url
+        const url = canvasImageUrl;
+        return () => {
+            if (url) {
+                URL.revokeObjectURL(url);
+            }
+        };
+    });
+
+    onDestroy(() => {
+        if (canvasImageUrl) {
+            URL.revokeObjectURL(canvasImageUrl);
+        }
     });
 </script>
 
