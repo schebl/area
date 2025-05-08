@@ -1,7 +1,8 @@
 <script lang="ts">
     import {Canvas} from "./lib/Canvas";
-    import type {Point} from "./lib/Point";
     import {onDestroy} from "svelte";
+    import {Polygon} from "./lib/Polygon.svelte";
+    import {Ruler} from "./lib/Ruler.svelte";
 
     let canvas: HTMLCanvasElement;
 
@@ -14,40 +15,15 @@
         return URL.createObjectURL(file);
     });
 
-    let polygonPoints: Point[] = $state([]);
-    let polygonArea = $derived(getPolygonArea(polygonPoints));
-
-    function getPolygonArea(polygon: Point[]): number {
-        let area = 0;
-        for (let i = 0; i < polygon.length; i++) {
-            const {x: x1, y: y1} = polygon[i];
-            const {x: x2, y: y2} = polygon[(i + 1) % polygon.length];
-
-            area += x1 * y2 - x2 * y1;
-        }
-        return Math.abs(area) / 2;
-    }
-
-    let rulerPoints: Point[] = $state([]);
-    let rulerLength = $derived(getRulerLength(rulerPoints));
-
-    function getRulerLength(ruler: Point[]): number {
-        if (ruler.length != 2) {
-            return 0;
-        }
-
-        return Math.hypot(
-            ruler[1].x - ruler[0].x,
-            ruler[1].y - ruler[0].y,
-        );
-    }
+    let polygon = new Polygon();
+    let ruler = new Ruler();
 
     let units = $state(1);
     let scale = $derived.by(() => {
-        if (rulerLength === 0) {
+        if (ruler.length() === 0) {
             return 1;
         }
-        return units / rulerLength;
+        return units / ruler.length();
     });
 
     type PointDrawingMode = "polygon" | "ruler"
@@ -55,35 +31,26 @@
 
     function handleAddPoint(e: MouseEvent) {
         if (currentDrawingMode === "polygon") {
-            polygonPoints.push({
-                x: e.offsetX,
-                y: e.offsetY,
-            });
+            polygon.addPoint(e.offsetX, e.offsetY);
             return;
         }
         if (currentDrawingMode === "ruler") {
-            rulerPoints.push({
-                x: e.offsetX,
-                y: e.offsetY,
-            });
-
-            if (rulerPoints.length > 2) {
-                rulerPoints.shift();
-            }
+            ruler.addPoint(e.offsetX, e.offsetY);
+            return;
         }
     }
 
     function handleClearAll() {
-        polygonPoints = [];
-        rulerPoints = [];
+        polygon.clear();
+        ruler.clear();
     }
 
     $effect(() => {
         const cnv = new Canvas(canvas);
         cnv.clear();
 
-        cnv.drawPoints(polygonPoints, true);
-        cnv.drawPoints(rulerPoints, false);
+        cnv.drawPoints(polygon.points, true);
+        cnv.drawPoints(ruler.points, false);
     });
 
     $effect(() => {
@@ -119,7 +86,7 @@
             Units: <input type="number" bind:value={units}>
         </div>
 
-        <p>Polygon Area: {polygonArea * scale ** 2}</p>
+        <p>Polygon Area: {polygon.area() * scale ** 2}</p>
     </div>
 
     <div>
