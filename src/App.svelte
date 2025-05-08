@@ -40,18 +40,18 @@
         return units / rulerLength;
     });
 
-    type PointsBuildingMode = "polygon" | "ruler"
-    let isBuildingPolygon: PointsBuildingMode = $state("polygon");
+    type PointDrawingMode = "polygon" | "ruler"
+    let currentDrawingMode: PointDrawingMode = $state("polygon");
 
     function handleAddPoint(e: MouseEvent) {
-        if (isBuildingPolygon === "polygon") {
+        if (currentDrawingMode === "polygon") {
             polygonPoints.push({
                 x: e.offsetX,
                 y: e.offsetY,
             });
             return;
         }
-        if (isBuildingPolygon === "ruler") {
+        if (currentDrawingMode === "ruler") {
             rulerPoints.push({
                 x: e.offsetX,
                 y: e.offsetY,
@@ -112,15 +112,15 @@
         <h3>Building Mode</h3>
 
         <button
-            onclick={() => {isBuildingPolygon = "polygon"}}
-            disabled={isBuildingPolygon === "polygon"}
+            onclick={() => {currentDrawingMode = "polygon"}}
+            disabled={currentDrawingMode === "polygon"}
         >
             Polygon
         </button>
 
         <button
-            onclick={() => {isBuildingPolygon = "ruler"}}
-            disabled={isBuildingPolygon === "ruler"}
+            onclick={() => {currentDrawingMode = "ruler"}}
+            disabled={currentDrawingMode === "ruler"}
         >
             Ruler
         </button>
