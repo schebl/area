@@ -26,18 +26,14 @@
         return units / ruler.length();
     });
 
-    type PointDrawingMode = "polygon" | "ruler"
-    let currentDrawingMode: PointDrawingMode = $state("polygon");
+    interface PointAppender {
+        addPoint(x: number, y: number): void;
+    }
+
+    let editingShape: PointAppender = $state(polygon);
 
     function handleAddPoint(e: MouseEvent) {
-        if (currentDrawingMode === "polygon") {
-            polygon.addPoint(e.offsetX, e.offsetY);
-            return;
-        }
-        if (currentDrawingMode === "ruler") {
-            ruler.addPoint(e.offsetX, e.offsetY);
-            return;
-        }
+        editingShape.addPoint(e.offsetX, e.offsetY);
     }
 
     function handleClearAll() {
@@ -93,15 +89,15 @@
         <h3>Building Mode</h3>
 
         <button
-            onclick={() => {currentDrawingMode = "polygon"}}
-            disabled={currentDrawingMode === "polygon"}
+            onclick={() => {editingShape = polygon}}
+            disabled={editingShape === polygon}
         >
             Polygon
         </button>
 
         <button
-            onclick={() => {currentDrawingMode = "ruler"}}
-            disabled={currentDrawingMode === "ruler"}
+            onclick={() => {editingShape = ruler}}
+            disabled={editingShape === ruler}
         >
             Ruler
         </button>
