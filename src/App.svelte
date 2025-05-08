@@ -14,7 +14,7 @@
         return URL.createObjectURL(file);
     });
 
-    const polygonPoints: Point[] = $state([]);
+    let polygonPoints: Point[] = $state([]);
     let polygonArea = $derived(getPolygonArea(polygonPoints));
 
     function getPolygonArea(polygon: Point[]): number {
@@ -28,7 +28,7 @@
         return Math.abs(area) / 2;
     }
 
-    const rulerPoints: Point[] = $state([]);
+    let rulerPoints: Point[] = $state([]);
     let rulerLength = $derived(getRulerLength(rulerPoints));
 
     function getRulerLength(ruler: Point[]): number {
@@ -71,6 +71,11 @@
                 rulerPoints.shift();
             }
         }
+    }
+
+    function handleClearAll() {
+        polygonPoints = [];
+        rulerPoints = [];
     }
 
     $effect(() => {
@@ -134,6 +139,8 @@
             Ruler
         </button>
     </div>
+
+    <button onclick={handleClearAll}>Clear All</button>
 </main>
 
 <style>
