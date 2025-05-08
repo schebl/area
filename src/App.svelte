@@ -3,6 +3,7 @@
     import type {Point} from "./lib/Point";
 
     let canvas: HTMLCanvasElement;
+    let canvasImageUrl = $state("")
 
     const polygonPoints: Point[] = $state([]);
     let polygonArea = $derived(getPolygonArea(polygonPoints));
@@ -76,7 +77,11 @@
 
         const reader = new FileReader();
         reader.onload = (e) => {
-            canvas.style.backgroundImage = `url(${e.target.result})`;
+            const url = e.target?.result;
+            if (typeof url !== "string") {
+                return;
+            }
+            canvasImageUrl = url;
         };
         reader.readAsDataURL(file);
     }
@@ -96,6 +101,7 @@
         onclick={handleAddPoint}
         width="500"
         height="500"
+        style="background-image: {canvasImageUrl ? `url(${canvasImageUrl})` : 'none'}"
     ></canvas>
 
     <div>
