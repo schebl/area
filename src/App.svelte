@@ -67,51 +67,94 @@
 </script>
 
 <main>
-    <canvas
-        bind:this={canvas}
-        onclick={handleAddPoint}
-        width="500"
-        height="500"
-        style="background-image: {canvasImageUrl ? `url(${canvasImageUrl})` : 'none'}"
-    ></canvas>
-
     <div>
-        <input type="file" accept="image/*" bind:files={files}>
+        <canvas
+            bind:this={canvas}
+            onclick={handleAddPoint}
+            width="500"
+            height="500"
+            style="background-image: {canvasImageUrl ? `url(${canvasImageUrl})` : 'none'}"
+        ></canvas>
+    </div>
 
-        <div>
-            Units: <input type="number" bind:value={units}>
+    <div class="controls">
+        <div class="controls-block">
+            <h3>Set background</h3>
+
+            <input type="file" accept="image/*" bind:files={files}>
         </div>
 
-        <p>Polygon Area: {polygon.area() * scale ** 2}</p>
+        <div class="controls-block">
+            <h3>Ruler</h3>
+
+            <button
+                onclick={() => {editingShape = ruler}}
+                disabled={editingShape === ruler}
+            >
+                Set Points
+            </button>
+
+            <div class="field">
+                <label for="units">Actual ruler length (in units)</label>
+
+                <input id="units" type="number" bind:value={units}>
+            </div>
+        </div>
+
+        <div class="controls-block">
+            <h3>Polygon</h3>
+
+            <button
+                onclick={() => {editingShape = polygon}}
+                disabled={editingShape === polygon}
+            >
+                Set Points
+            </button>
+
+            <div class="info-row">
+                <p>Area</p>
+
+                <p>{polygon.area() * scale ** 2}</p>
+            </div>
+        </div>
+
+        <button onclick={handleClearAll}>Clear All</button>
     </div>
-
-    <div>
-        <h3>Building Mode</h3>
-
-        <button
-            onclick={() => {editingShape = polygon}}
-            disabled={editingShape === polygon}
-        >
-            Polygon
-        </button>
-
-        <button
-            onclick={() => {editingShape = ruler}}
-            disabled={editingShape === ruler}
-        >
-            Ruler
-        </button>
-    </div>
-
-    <button onclick={handleClearAll}>Clear All</button>
 </main>
 
 <style>
+    main {
+        padding: 2rem 0;
+        display: flex;
+        gap: 1.5rem;
+    }
+
     canvas {
         border: 1px solid var(--border);
         background-repeat: no-repeat;
         background-size: contain;
         background-position-y: center;
         background-position-x: center;
+    }
+
+    .controls {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .controls-block {
+        display: grid;
+        gap: 1rem;
+    }
+
+    .field {
+        display: grid;
+        gap: 0.5rem;
+    }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
     }
 </style>
