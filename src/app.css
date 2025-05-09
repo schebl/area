@@ -6,7 +6,7 @@
     --foreground: #efefef;
     --primary: #1a1a1a;
     --primary-fg: #e4e4e4;
-    --border: #3bb8ff;
+    --border: #ff4500;
 
     color-scheme: light dark;
     color: var(--foreground);
@@ -19,7 +19,7 @@
         --background: #f9f9f9;
         --primary: #e4e4e4;
         --primary-fg: #1a1a1a;
-        --border: #3bb8ff;
+        --border: #ff4500;
 
         color: var(--foreground);
         background-color: var(--background);
