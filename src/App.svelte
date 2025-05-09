@@ -6,6 +6,8 @@
 
     let canvas: HTMLCanvasElement;
 
+    let lineColor = $state("#ff4500");
+
     let files = $state<FileList | null>(null);
     let canvasImageUrl = $derived.by(() => {
         const file = files?.[0] ?? null;
@@ -42,7 +44,7 @@
     }
 
     $effect(() => {
-        const cnv = new Canvas(canvas);
+        const cnv = new Canvas(canvas, lineColor);
         cnv.clear();
 
         cnv.drawPoints(polygon.points, true);
@@ -117,6 +119,8 @@
                 <p>{polygon.area() * scale ** 2}</p>
             </div>
         </div>
+
+        <input type="color" bind:value={lineColor}> {lineColor}
 
         <button onclick={handleClearAll}>Clear All</button>
     </div>

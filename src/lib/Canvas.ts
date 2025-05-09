@@ -3,14 +3,14 @@ import type {Point} from "./Point";
 export class Canvas {
     private readonly ctx: CanvasRenderingContext2D;
 
-    constructor(canvas: HTMLCanvasElement) {
+    constructor(canvas: HTMLCanvasElement, color: string) {
         const ctx = canvas.getContext("2d");
         if (!ctx) {
             throw new Error("unable to get context from canvas");
         }
         this.ctx = ctx;
 
-        this.ctx.strokeStyle = "#535bf2";
+        this.ctx.strokeStyle = color;
     }
 
     public drawPoints(points: Point[], closePath: boolean) {
