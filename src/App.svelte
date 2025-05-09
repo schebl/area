@@ -108,7 +108,7 @@
 
 <style>
     canvas {
-        border: 1px solid #535bf2;
+        border: 1px solid var(--border);
         background-repeat: no-repeat;
         background-size: contain;
         background-position-y: center;
