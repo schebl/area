@@ -2,11 +2,11 @@
     font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
 
-    --background: #242424;
-    --foreground: #efefef;
-    --primary: #1a1a1a;
-    --primary-fg: #e4e4e4;
-    --border: #ff4500;
+    --background: #2d2d2d;
+    --foreground: #f0f0f0;
+    --primary: #1d1d1d;
+    --primary-fg: #dedede;
+    --border: #080808;
 
     color-scheme: light dark;
     color: var(--foreground);
@@ -15,14 +15,11 @@
 
 @media (prefers-color-scheme: light) {
     :root {
-        --foreground: #242424;
-        --background: #f9f9f9;
-        --primary: #e4e4e4;
-        --primary-fg: #1a1a1a;
-        --border: #ff4500;
-
-        color: var(--foreground);
-        background-color: var(--background);
+        --background: #f0f0f0;
+        --foreground: #2d2d2d;
+        --primary: #dedede;
+        --primary-fg: #1d1d1d;
+        --border: #cecece;
     }
 }
 
@@ -63,11 +60,11 @@ input, button, textarea, select {
 button {
     border-radius: 8px;
     border: 1px solid transparent;
-    padding: 0.6em 1.2em;
+    padding: 0.4rem 0.8rem;
     background-color: var(--primary);
     color: var(--primary-fg);
     cursor: pointer;
-    transition: border-color 0.25s;
+    transition: background-color 0.25s, border-color 0.25s;
 }
 
 button:disabled {
@@ -77,4 +74,5 @@ button:disabled {
 
 button:hover {
     border-color: var(--border);
+    background-color: var(--background);
 }
