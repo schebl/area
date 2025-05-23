@@ -17,7 +17,7 @@
         return URL.createObjectURL(file);
     });
 
-    let polygon = new Polygon();
+    let polygons: Polygon[] = $state([new Polygon()]);
     let ruler = new Ruler();
 
     let units = $state(1);
@@ -32,14 +32,14 @@
         addPoint(x: number, y: number): void;
     }
 
-    let editingShape: PointAppender = $state(polygon);
+    let editingShape: PointAppender = $state(ruler);
 
     function handleAddPoint(e: MouseEvent) {
         editingShape.addPoint(e.offsetX, e.offsetY);
     }
 
     function handleClearAll() {
-        polygon.clear();
+        polygons = [];
         ruler.clear();
     }
 
@@ -47,7 +47,9 @@
         const cnv = new Canvas(canvas, lineColor);
         cnv.clear();
 
-        cnv.drawPoints(polygon.points, true);
+        for (const polygon of polygons) {
+            cnv.drawPoints(polygon.points, true);
+        }
         cnv.drawPoints(ruler.points, false);
     });
 
@@ -104,20 +106,28 @@
         </div>
 
         <div class="controls-block">
-            <h3>Polygon</h3>
+            <button onclick={() => {polygons.push(new Polygon())}}>Add Polygon</button>
 
-            <button
-                onclick={() => {editingShape = polygon}}
-                disabled={editingShape === polygon}
-            >
-                Set Points
-            </button>
+            {#each polygons as polygon, index}
+                <div>
+                    <h3>Polygon {index + 1}</h3>
 
-            <div class="info-row">
-                <p>Area</p>
+                    <button
+                        onclick={() => {editingShape = polygon}}
+                        disabled={editingShape === polygon}
+                    >
+                        Set Points
+                    </button>
 
-                <p>{polygon.area() * scale ** 2}</p>
-            </div>
+                    <button onclick={() => {polygons.splice(index, 1)}}>Remove</button>
+
+                    <div class="info-row">
+                        <p>Area</p>
+
+                        <p>{polygon.area() * scale ** 2}</p>
+                    </div>
+                </div>
+            {/each}
         </div>
 
         <input type="color" bind:value={lineColor}> {lineColor}
