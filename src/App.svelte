@@ -113,20 +113,26 @@
         </div>
 
         <div class="controls-block">
-            <button onclick={() => {polygons.push(new Polygon())}}>Add Polygon</button>
+            <div class="controls-block-header">
+                <h3>Polygons</h3>
+
+                <button onclick={() => {polygons.push(new Polygon())}}>Add</button>
+            </div>
 
             {#each polygons as polygon, index}
-                <div>
-                    <h3>Polygon {index + 1}</h3>
+                <div class="polygon">
+                    <div class="polygon-main">
+                        <button
+                            onclick={() => {editingShape = polygon}}
+                            disabled={editingShape === polygon}
+                        >
+                            Set Points
+                        </button>
 
-                    <button
-                        onclick={() => {editingShape = polygon}}
-                        disabled={editingShape === polygon}
-                    >
-                        Set Points
-                    </button>
+                        <p>Polygon {index + 1}</p>
 
-                    <button onclick={() => {polygons.splice(index, 1)}}>Remove</button>
+                        <button onclick={() => {polygons.splice(index, 1)}}>Remove</button>
+                    </div>
 
                     <div class="info-row">
                         <p>Area</p>
@@ -143,7 +149,7 @@
             </div>
         </div>
 
-        <input type="color" bind:value={lineColor}> {lineColor}
+        <input type="color" bind:value={lineColor}>
 
         <button onclick={handleClearAll}>Clear All</button>
     </div>
@@ -173,6 +179,27 @@
     .controls-block {
         display: grid;
         gap: 1rem;
+    }
+
+    .controls-block-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .polygon {
+        padding: 0.5rem;
+        border: 1px solid var(--border);
+        border-radius: 0.5rem;
+        display: grid;
+        gap: 0.5rem;
+    }
+
+    .polygon-main {
+        display: flex;
+        gap: 1rem;
+        justify-content: space-between;
+        align-items: center;
     }
 
     .field {
