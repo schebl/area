@@ -27,6 +27,13 @@
         }
         return units / ruler.length();
     });
+    let totalArea = $derived.by(() => {
+        let total = 0;
+        for (const polygon of polygons) {
+            total += polygon.area();
+        }
+        return total * scale ** 2;
+    });
 
     interface PointAppender {
         addPoint(x: number, y: number): void;
@@ -128,6 +135,12 @@
                     </div>
                 </div>
             {/each}
+
+            <div class="info-row">
+                <p>Total Area</p>
+
+                <p>{totalArea}</p>
+            </div>
         </div>
 
         <input type="color" bind:value={lineColor}> {lineColor}
