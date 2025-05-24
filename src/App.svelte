@@ -57,9 +57,9 @@
             cnv.clear();
 
             for (const polygon of polygons) {
-                cnv.drawPoints(polygon.points, true);
+                cnv.drawShape(polygon);
             }
-            cnv.drawPoints(ruler.points, false);
+            cnv.drawShape(ruler);
         };
     }
 

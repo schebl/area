@@ -1,6 +1,7 @@
 import type {Point} from "./Point";
+import type {Shape} from "./Canvas";
 
-export class Ruler {
+export class Ruler implements Shape {
     public points = $state<Point[]>([]);
 
     public addPoint(x: number, y: number) {
@@ -12,6 +13,14 @@ export class Ruler {
         if (this.points.length > 2) {
             this.points.shift();
         }
+    }
+
+    public draw(ctx: CanvasRenderingContext2D): void {
+        ctx.beginPath();
+        for (let i = 0; i < this.points.length; i++) {
+            ctx.lineTo(this.points[i].x, this.points[i].y);
+        }
+        ctx.stroke();
     }
 
     public clear() {

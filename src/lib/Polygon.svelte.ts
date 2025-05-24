@@ -1,6 +1,7 @@
 import type {Point} from "./Point";
+import type {Shape} from "./Canvas";
 
-export class Polygon {
+export class Polygon implements Shape {
     public points = $state<Point[]>([]);
 
     public addPoint(x: number, y: number) {
@@ -8,6 +9,15 @@ export class Polygon {
             x: x,
             y: y,
         });
+    }
+
+    public draw(ctx: CanvasRenderingContext2D): void {
+        ctx.beginPath();
+        for (let i = 0; i < this.points.length; i++) {
+            ctx.lineTo(this.points[i].x, this.points[i].y);
+        }
+        ctx.closePath();
+        ctx.stroke();
     }
 
     public clear() {

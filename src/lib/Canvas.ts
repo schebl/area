@@ -1,4 +1,6 @@
-import type {Point} from "./Point";
+export interface Shape {
+    draw(ctx: CanvasRenderingContext2D): void;
+}
 
 export class Canvas {
     private readonly ctx: CanvasRenderingContext2D;
@@ -13,17 +15,8 @@ export class Canvas {
         this.ctx.strokeStyle = color;
     }
 
-    public drawPoints(points: Point[], closePath: boolean) {
-        this.ctx.beginPath();
-        for (let i = 0; i < points.length; i++) {
-            this.ctx.lineTo(points[i].x, points[i].y);
-        }
-
-        if (closePath) {
-            this.ctx.closePath();
-        }
-
-        this.ctx.stroke();
+    public drawShape(shape: Shape) {
+        shape.draw(this.ctx);
     }
 
     public clear() {
