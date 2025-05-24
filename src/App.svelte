@@ -57,26 +57,18 @@
 
             $effect(() => {
                 ctx.strokeStyle = lineColor;
-                clear(ctx);
+                ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
                 for (const polygon of polygons) {
-                    drawShape(polygon, ctx);
+                    polygon.draw(ctx);
                 }
-                drawShape(ruler, ctx);
+                ruler.draw(ctx);
             });
 
             return () => {
                 canvas.removeEventListener("click", handleClick);
             };
         };
-    }
-
-    function drawShape(shape: Shape, ctx: CanvasRenderingContext2D) {
-        shape.draw(ctx);
-    }
-
-    function clear(ctx: CanvasRenderingContext2D) {
-        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     }
 
     $effect(() => {
