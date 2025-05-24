@@ -1,9 +1,9 @@
 <script lang="ts">
-    import {Canvas, type Shape} from "./lib/Canvas";
     import {onDestroy} from "svelte";
     import {Polygon} from "./lib/Polygon.svelte";
     import {Ruler} from "./lib/Ruler.svelte";
     import type {Attachment} from "svelte/attachments";
+    import type {Shape} from "./lib/Shape";
 
     let lineColor = $state("#ff4500");
 
@@ -44,13 +44,18 @@
         return (element) => {
             const canvas = element as HTMLCanvasElement;
 
-            const cnv = new Canvas(canvas, lineColor);
-            cnv.clear();
+            const ctx = canvas.getContext("2d");
+            if (!ctx) {
+                throw new Error("unable to get context from canvas");
+            }
+            clear(ctx);
+
+            ctx.strokeStyle = lineColor;
 
             for (const polygon of polygons) {
-                cnv.drawShape(polygon);
+                drawShape(polygon, ctx);
             }
-            cnv.drawShape(ruler);
+            drawShape(ruler, ctx);
 
             function handleClick(e: MouseEvent) {
                 editingShape.handleClick(e.offsetX, e.offsetY);
@@ -62,6 +67,14 @@
                 canvas.removeEventListener("click", handleClick);
             };
         };
+    }
+
+    function drawShape(shape: Shape, ctx: CanvasRenderingContext2D) {
+        shape.draw(ctx);
+    }
+
+    function clear(ctx: CanvasRenderingContext2D) {
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     }
 
     $effect(() => {

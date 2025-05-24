@@ -1,5 +1,5 @@
 import type {Point} from "./Point";
-import type {Shape} from "./Canvas";
+import type {Shape} from "./Shape";
 
 export class Ruler implements Shape {
     public points = $state<Point[]>([]);
