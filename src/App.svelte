@@ -3,8 +3,7 @@
     import {onDestroy} from "svelte";
     import {Polygon} from "./lib/Polygon.svelte";
     import {Ruler} from "./lib/Ruler.svelte";
-
-    let canvas: HTMLCanvasElement;
+    import type {Attachment} from "svelte/attachments";
 
     let lineColor = $state("#ff4500");
 
@@ -50,15 +49,19 @@
         ruler.clear();
     }
 
-    $effect(() => {
-        const cnv = new Canvas(canvas, lineColor);
-        cnv.clear();
+    function canvasAttachment(): Attachment {
+        return (element) => {
+            const canvas = element as HTMLCanvasElement;
 
-        for (const polygon of polygons) {
-            cnv.drawPoints(polygon.points, true);
-        }
-        cnv.drawPoints(ruler.points, false);
-    });
+            const cnv = new Canvas(canvas, lineColor);
+            cnv.clear();
+
+            for (const polygon of polygons) {
+                cnv.drawPoints(polygon.points, true);
+            }
+            cnv.drawPoints(ruler.points, false);
+        };
+    }
 
     $effect(() => {
         // save replaced image url
@@ -80,7 +83,7 @@
 <main>
     <div>
         <canvas
-            bind:this={canvas}
+            {@attach canvasAttachment()}
             onclick={handleAddPoint}
             width="500"
             height="500"
