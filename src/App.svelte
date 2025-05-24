@@ -1,39 +1,22 @@
 <script lang="ts">
     import {onDestroy} from "svelte";
-    import {Polygon} from "./lib/Polygon.svelte";
-    import {Ruler} from "./lib/Ruler.svelte";
     import type {Attachment} from "svelte/attachments";
     import {type DrawableShape, ShapeManager} from "./lib/Shape.svelte";
+    import {Ruler} from "./lib/Ruler.svelte";
+    import {Polygon} from "./lib/Polygon.svelte";
     import {Circle} from "./lib/Circle.svelte";
 
-    let lineColor = $state("#ff4500");
-
-    let files = $state<FileList | null>(null);
-    let canvasImageUrl = $derived.by(() => {
-        const file = files?.[0] ?? null;
-        if (!file) {
-            return null;
-        }
-        return URL.createObjectURL(file);
-    });
-
-    let shapes = new ShapeManager([new Polygon()]);
     let ruler = new Ruler();
+    let shapes = new ShapeManager([new Polygon()]);
 
-    let units = $state(1);
-    let scale = $derived.by(() => {
-        if (ruler.length() === 0) {
-            return 1;
-        }
-        return units / ruler.length();
-    });
-    let totalArea = $derived(shapes.area() * scale ** 2);
     let editingShape: DrawableShape = $state(ruler);
 
     function handleClearAll() {
-        shapes.clear();
         ruler.clear();
+        shapes.clear();
     }
+
+    let lineColor = $state("#ff4500");
 
     function canvasAttachment(): Attachment {
         return (element) => {
@@ -51,13 +34,13 @@
             canvas.addEventListener("click", handleClick);
 
             $effect(() => {
-                ctx.strokeStyle = lineColor;
                 ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+                ctx.strokeStyle = lineColor;
 
+                ruler.draw(ctx);
                 for (const shape of shapes.all()) {
                     shape.draw(ctx);
                 }
-                ruler.draw(ctx);
             });
 
             return () => {
@@ -65,6 +48,24 @@
             };
         };
     }
+
+    let units = $state(1);
+    let scale = $derived.by(() => {
+        if (ruler.length() === 0) {
+            return 1;
+        }
+        return units / ruler.length();
+    });
+    let totalArea = $derived(shapes.area() * scale ** 2);
+
+    let files = $state<FileList | null>(null);
+    let canvasImageUrl = $derived.by(() => {
+        const file = files?.[0] ?? null;
+        if (!file) {
+            return null;
+        }
+        return URL.createObjectURL(file);
+    });
 
     $effect(() => {
         // save replaced image url
