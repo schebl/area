@@ -4,6 +4,7 @@
     import {Ruler} from "./lib/Ruler.svelte";
     import type {Attachment} from "svelte/attachments";
     import type {Shape} from "./lib/Shape";
+    import {Circle} from "./lib/Circle.svelte";
 
     let lineColor = $state("#ff4500");
 
@@ -16,7 +17,7 @@
         return URL.createObjectURL(file);
     });
 
-    let shapes: Polygon[] = $state([new Polygon()]);
+    let shapes: (Polygon|Circle)[] = $state([new Polygon()]);
     let ruler = new Ruler();
 
     let units = $state(1);
@@ -127,6 +128,8 @@
                 <h3>Shapes</h3>
 
                 <button onclick={() => {shapes.push(new Polygon())}}>Add Polygon</button>
+
+                <button onclick={() => {shapes.push(new Circle({x: 250, y: 250}))}}>Add Circle</button>
             </div>
 
             {#each shapes as shape, index}
@@ -136,7 +139,7 @@
                             onclick={() => {editingShape = shape}}
                             disabled={editingShape === shape}
                         >
-                            Set Points
+                            Select
                         </button>
 
                         <p>Shape {index + 1}</p>
