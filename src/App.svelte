@@ -16,7 +16,7 @@
         return URL.createObjectURL(file);
     });
 
-    let polygons: Polygon[] = $state([new Polygon()]);
+    let shapes: Polygon[] = $state([new Polygon()]);
     let ruler = new Ruler();
 
     let units = $state(1);
@@ -28,15 +28,15 @@
     });
     let totalArea = $derived.by(() => {
         let total = 0;
-        for (const polygon of polygons) {
-            total += polygon.area();
+        for (const shape of shapes) {
+            total += shape.area();
         }
         return total * scale ** 2;
     });
     let editingShape: Shape = $state(ruler);
 
     function handleClearAll() {
-        polygons = [];
+        shapes = [];
         ruler.clear();
     }
 
@@ -59,8 +59,8 @@
                 ctx.strokeStyle = lineColor;
                 ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-                for (const polygon of polygons) {
-                    polygon.draw(ctx);
+                for (const shape of shapes) {
+                    shape.draw(ctx);
                 }
                 ruler.draw(ctx);
             });
@@ -124,30 +124,30 @@
 
         <div class="controls-block">
             <div class="controls-block-header">
-                <h3>Polygons</h3>
+                <h3>Shapes</h3>
 
-                <button onclick={() => {polygons.push(new Polygon())}}>Add</button>
+                <button onclick={() => {shapes.push(new Polygon())}}>Add Polygon</button>
             </div>
 
-            {#each polygons as polygon, index}
-                <div class="polygon">
-                    <div class="polygon-main">
+            {#each shapes as shape, index}
+                <div class="shape">
+                    <div class="shape-main">
                         <button
-                            onclick={() => {editingShape = polygon}}
-                            disabled={editingShape === polygon}
+                            onclick={() => {editingShape = shape}}
+                            disabled={editingShape === shape}
                         >
                             Set Points
                         </button>
 
-                        <p>Polygon {index + 1}</p>
+                        <p>Shape {index + 1}</p>
 
-                        <button onclick={() => {polygons.splice(index, 1)}}>Remove</button>
+                        <button onclick={() => {shapes.splice(index, 1)}}>Remove</button>
                     </div>
 
                     <div class="info-row">
                         <p>Area</p>
 
-                        <p>{polygon.area() * scale ** 2}</p>
+                        <p>{shape.area() * scale ** 2}</p>
                     </div>
                 </div>
             {/each}
@@ -197,7 +197,7 @@
         align-items: center;
     }
 
-    .polygon {
+    .shape {
         padding: 0.5rem;
         border: 1px solid var(--border);
         border-radius: 0.5rem;
@@ -205,7 +205,7 @@
         gap: 0.5rem;
     }
 
-    .polygon-main {
+    .shape-main {
         display: flex;
         gap: 1rem;
         justify-content: space-between;
