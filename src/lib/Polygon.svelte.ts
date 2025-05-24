@@ -1,5 +1,5 @@
 import type {Point} from "./Point";
-import type {Shape} from "./Shape";
+import type {Shape} from "./Shape.svelte";
 
 export class Polygon implements Shape {
     public points = $state<Point[]>([]);

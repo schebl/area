@@ -1,5 +1,5 @@
 import type {Point} from "./Point";
-import type {Shape} from "./Shape";
+import type {Shape} from "./Shape.svelte";
 
 export class Circle implements Shape {
     private center: Point;
@@ -29,7 +29,7 @@ export class Circle implements Shape {
 
     public area(): number {
         if (this.radius < 0) {
-            throw new RangeError("radius cannot be negative")
+            throw new RangeError("radius cannot be negative");
         }
 
         return Math.PI * this.radius ** 2;

@@ -1,7 +1,7 @@
 import type {Point} from "./Point";
-import type {Shape} from "./Shape";
+import type {DrawableShape} from "./Shape.svelte";
 
-export class Ruler implements Shape {
+export class Ruler implements DrawableShape {
     public points = $state<Point[]>([]);
 
     public addPoint(x: number, y: number) {

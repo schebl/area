@@ -3,7 +3,7 @@
     import {Polygon} from "./lib/Polygon.svelte";
     import {Ruler} from "./lib/Ruler.svelte";
     import type {Attachment} from "svelte/attachments";
-    import type {Shape} from "./lib/Shape";
+    import {type DrawableShape, ShapeManager} from "./lib/Shape.svelte";
     import {Circle} from "./lib/Circle.svelte";
 
     let lineColor = $state("#ff4500");
@@ -17,7 +17,7 @@
         return URL.createObjectURL(file);
     });
 
-    let shapes: (Polygon|Circle)[] = $state([new Polygon()]);
+    let shapes = new ShapeManager([new Polygon()]);
     let ruler = new Ruler();
 
     let units = $state(1);
@@ -27,17 +27,11 @@
         }
         return units / ruler.length();
     });
-    let totalArea = $derived.by(() => {
-        let total = 0;
-        for (const shape of shapes) {
-            total += shape.area();
-        }
-        return total * scale ** 2;
-    });
-    let editingShape: Shape = $state(ruler);
+    let totalArea = $derived(shapes.area() * scale ** 2);
+    let editingShape: DrawableShape = $state(ruler);
 
     function handleClearAll() {
-        shapes = [];
+        shapes.clear();
         ruler.clear();
     }
 
@@ -60,7 +54,7 @@
                 ctx.strokeStyle = lineColor;
                 ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-                for (const shape of shapes) {
+                for (const shape of shapes.all()) {
                     shape.draw(ctx);
                 }
                 ruler.draw(ctx);
@@ -127,12 +121,12 @@
             <div class="controls-block-header">
                 <h3>Shapes</h3>
 
-                <button onclick={() => {shapes.push(new Polygon())}}>Add Polygon</button>
+                <button onclick={() => {shapes.add(new Polygon())}}>Add Polygon</button>
 
-                <button onclick={() => {shapes.push(new Circle({x: 250, y: 250}))}}>Add Circle</button>
+                <button onclick={() => {shapes.add(new Circle({x: 250, y: 250}))}}>Add Circle</button>
             </div>
 
-            {#each shapes as shape, index}
+            {#each shapes.all() as shape, index}
                 <div class="shape">
                     <div class="shape-main">
                         <button
@@ -144,7 +138,7 @@
 
                         <p>Shape {index + 1}</p>
 
-                        <button onclick={() => {shapes.splice(index, 1)}}>Remove</button>
+                        <button onclick={() => {shapes.remove(index)}}>Remove</button>
                     </div>
 
                     <div class="info-row">
