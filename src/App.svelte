@@ -48,20 +48,22 @@
             if (!ctx) {
                 throw new Error("unable to get context from canvas");
             }
-            clear(ctx);
-
-            ctx.strokeStyle = lineColor;
-
-            for (const polygon of polygons) {
-                drawShape(polygon, ctx);
-            }
-            drawShape(ruler, ctx);
 
             function handleClick(e: MouseEvent) {
                 editingShape.handleClick(e.offsetX, e.offsetY);
             }
 
             canvas.addEventListener("click", handleClick);
+
+            $effect(() => {
+                ctx.strokeStyle = lineColor;
+                clear(ctx);
+
+                for (const polygon of polygons) {
+                    drawShape(polygon, ctx);
+                }
+                drawShape(ruler, ctx);
+            });
 
             return () => {
                 canvas.removeEventListener("click", handleClick);
