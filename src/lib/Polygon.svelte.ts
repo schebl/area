@@ -20,6 +20,10 @@ export class Polygon implements Shape {
         ctx.stroke();
     }
 
+    handleClick(x: number, y: number): void {
+        this.addPoint(x, y);
+    }
+
     public clear() {
         this.points = [];
     }

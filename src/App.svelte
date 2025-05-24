@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {Canvas} from "./lib/Canvas";
+    import {Canvas, type Shape} from "./lib/Canvas";
     import {onDestroy} from "svelte";
     import {Polygon} from "./lib/Polygon.svelte";
     import {Ruler} from "./lib/Ruler.svelte";
@@ -33,16 +33,7 @@
         }
         return total * scale ** 2;
     });
-
-    interface PointAppender {
-        addPoint(x: number, y: number): void;
-    }
-
-    let editingShape: PointAppender = $state(ruler);
-
-    function handleAddPoint(e: MouseEvent) {
-        editingShape.addPoint(e.offsetX, e.offsetY);
-    }
+    let editingShape: Shape = $state(ruler);
 
     function handleClearAll() {
         polygons = [];
@@ -60,6 +51,16 @@
                 cnv.drawShape(polygon);
             }
             cnv.drawShape(ruler);
+
+            function handleClick(e: MouseEvent) {
+                editingShape.handleClick(e.offsetX, e.offsetY);
+            }
+
+            canvas.addEventListener("click", handleClick);
+
+            return () => {
+                canvas.removeEventListener("click", handleClick);
+            };
         };
     }
 
@@ -84,7 +85,6 @@
     <div>
         <canvas
             {@attach canvasAttachment()}
-            onclick={handleAddPoint}
             width="500"
             height="500"
             style="background-image: {canvasImageUrl ? `url(${canvasImageUrl})` : 'none'}"
