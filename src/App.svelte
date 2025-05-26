@@ -142,6 +142,14 @@
                         <button onclick={() => {shapes.remove(index)}}>Remove</button>
                     </div>
 
+                    {#if shape instanceof Circle}
+                        <div class="info-row">
+                            <p>Radius</p>
+
+                            <input type="number" min="0" bind:value={shape.radius} style="width: 10ch">
+                        </div>
+                    {/if}
+
                     <div class="info-row">
                         <p>Area</p>
 

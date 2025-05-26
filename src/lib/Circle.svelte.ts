@@ -7,7 +7,7 @@ export class Circle implements Shape {
 
     constructor(center: Point, radius: number = 100) {
         this.center = $state(center);
-        this.radius = radius;
+        this.radius = $state(radius);
     }
 
     public setCenter(x: number, y: number) {
