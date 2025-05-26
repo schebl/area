@@ -1,11 +1,62 @@
 <script lang="ts">
-    import {Canvas} from "./lib/Canvas";
     import {onDestroy} from "svelte";
-    import {Polygon} from "./lib/Polygon.svelte";
-    import {Ruler} from "./lib/Ruler.svelte";
     import type {Attachment} from "svelte/attachments";
+    import {type Shape, ShapeManager} from "./lib/Shape.svelte";
+    import {Ruler} from "./lib/Ruler.svelte";
+    import {Polygon} from "./lib/Polygon.svelte";
+    import {Circle} from "./lib/Circle.svelte";
+
+    let ruler = new Ruler();
+    let shapes = new ShapeManager([new Polygon()]);
+
+    let editingShape: Shape = $state(ruler);
+
+    function handleClearAll() {
+        ruler.clear();
+        shapes.clear();
+    }
 
     let lineColor = $state("#ff4500");
+
+    function canvasAttachment(): Attachment {
+        return (element) => {
+            const canvas = element as HTMLCanvasElement;
+
+            const ctx = canvas.getContext("2d");
+            if (!ctx) {
+                throw new Error("unable to get context from canvas");
+            }
+
+            function handleClick(e: MouseEvent) {
+                editingShape.handleClick(e.offsetX, e.offsetY);
+            }
+
+            canvas.addEventListener("click", handleClick);
+
+            $effect(() => {
+                ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+                ctx.strokeStyle = lineColor;
+
+                ruler.draw(ctx);
+                for (const shape of shapes.all()) {
+                    shape.draw(ctx);
+                }
+            });
+
+            return () => {
+                canvas.removeEventListener("click", handleClick);
+            };
+        };
+    }
+
+    let units = $state(1);
+    let scale = $derived.by(() => {
+        if (ruler.length() === 0) {
+            return 1;
+        }
+        return units / ruler.length();
+    });
+    let totalArea = $derived(shapes.area() * scale ** 2);
 
     let files = $state<FileList | null>(null);
     let canvasImageUrl = $derived.by(() => {
@@ -15,53 +66,6 @@
         }
         return URL.createObjectURL(file);
     });
-
-    let polygons: Polygon[] = $state([new Polygon()]);
-    let ruler = new Ruler();
-
-    let units = $state(1);
-    let scale = $derived.by(() => {
-        if (ruler.length() === 0) {
-            return 1;
-        }
-        return units / ruler.length();
-    });
-    let totalArea = $derived.by(() => {
-        let total = 0;
-        for (const polygon of polygons) {
-            total += polygon.area();
-        }
-        return total * scale ** 2;
-    });
-
-    interface PointAppender {
-        addPoint(x: number, y: number): void;
-    }
-
-    let editingShape: PointAppender = $state(ruler);
-
-    function handleAddPoint(e: MouseEvent) {
-        editingShape.addPoint(e.offsetX, e.offsetY);
-    }
-
-    function handleClearAll() {
-        polygons = [];
-        ruler.clear();
-    }
-
-    function canvasAttachment(): Attachment {
-        return (element) => {
-            const canvas = element as HTMLCanvasElement;
-
-            const cnv = new Canvas(canvas, lineColor);
-            cnv.clear();
-
-            for (const polygon of polygons) {
-                cnv.drawPoints(polygon.points, true);
-            }
-            cnv.drawPoints(ruler.points, false);
-        };
-    }
 
     $effect(() => {
         // save replaced image url
@@ -84,7 +88,6 @@
     <div>
         <canvas
             {@attach canvasAttachment()}
-            onclick={handleAddPoint}
             width="500"
             height="500"
             style="background-image: {canvasImageUrl ? `url(${canvasImageUrl})` : 'none'}"
@@ -117,30 +120,40 @@
 
         <div class="controls-block">
             <div class="controls-block-header">
-                <h3>Polygons</h3>
+                <h3>Shapes</h3>
 
-                <button onclick={() => {polygons.push(new Polygon())}}>Add</button>
+                <button onclick={() => {shapes.add(new Polygon())}}>Add Polygon</button>
+
+                <button onclick={() => {shapes.add(new Circle({x: 250, y: 250}))}}>Add Circle</button>
             </div>
 
-            {#each polygons as polygon, index}
-                <div class="polygon">
-                    <div class="polygon-main">
+            {#each shapes.all() as shape, index}
+                <div class="shape">
+                    <div class="shape-main">
                         <button
-                            onclick={() => {editingShape = polygon}}
-                            disabled={editingShape === polygon}
+                            onclick={() => {editingShape = shape}}
+                            disabled={editingShape === shape}
                         >
-                            Set Points
+                            Select
                         </button>
 
-                        <p>Polygon {index + 1}</p>
+                        <p>Shape {index + 1}</p>
 
-                        <button onclick={() => {polygons.splice(index, 1)}}>Remove</button>
+                        <button onclick={() => {shapes.remove(index)}}>Remove</button>
                     </div>
+
+                    {#if shape instanceof Circle}
+                        <div class="info-row">
+                            <p>Radius</p>
+
+                            <input type="number" min="0" bind:value={shape.radius} style="width: 10ch">
+                        </div>
+                    {/if}
 
                     <div class="info-row">
                         <p>Area</p>
 
-                        <p>{polygon.area() * scale ** 2}</p>
+                        <p>{shape.area() * scale ** 2}</p>
                     </div>
                 </div>
             {/each}
@@ -190,7 +203,7 @@
         align-items: center;
     }
 
-    .polygon {
+    .shape {
         padding: 0.5rem;
         border: 1px solid var(--border);
         border-radius: 0.5rem;
@@ -198,7 +211,7 @@
         gap: 0.5rem;
     }
 
-    .polygon-main {
+    .shape-main {
         display: flex;
         gap: 1rem;
         justify-content: space-between;
