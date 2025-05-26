@@ -1,7 +1,7 @@
 <script lang="ts">
     import {onDestroy} from "svelte";
     import type {Attachment} from "svelte/attachments";
-    import {type DrawableShape, ShapeManager} from "./lib/Shape.svelte";
+    import {type Shape, ShapeManager} from "./lib/Shape.svelte";
     import {Ruler} from "./lib/Ruler.svelte";
     import {Polygon} from "./lib/Polygon.svelte";
     import {Circle} from "./lib/Circle.svelte";
@@ -9,7 +9,7 @@
     let ruler = new Ruler();
     let shapes = new ShapeManager([new Polygon()]);
 
-    let editingShape: DrawableShape = $state(ruler);
+    let editingShape: Shape = $state(ruler);
 
     function handleClearAll() {
         ruler.clear();

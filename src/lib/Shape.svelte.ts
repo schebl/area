@@ -1,11 +1,9 @@
-export interface DrawableShape {
+export interface Shape {
+    area(): number;
+
     draw(ctx: CanvasRenderingContext2D): void;
 
     handleClick(x: number, y: number): void;
-}
-
-export interface Shape extends DrawableShape {
-    area(): number;
 }
 
 export class ShapeManager {
